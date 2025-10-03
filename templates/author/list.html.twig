@@ -19,9 +19,7 @@
 
 	<div class="example-wrapper">
 
-		<h1>
-			le tableau contient
-			{{authorsList| length}}</h1>
+
 		{% if authorsList is defined and authorsList is not empty %}
 			<table border="1">
 				<tr>
@@ -31,8 +29,9 @@
 					<th>email</th>
 					<th>nb_books</th>
 				</tr>
-
+				{% set total=0 %}
 				{% for author in authorsList %}
+
 					<tr>
 						<td>{{author.id}}</td>
 						<td>
@@ -40,6 +39,11 @@
 						<td>{{author.username | upper}}</td>
 						<td>{{author.email}}</td>
 						<td>{{author.nb_books}}</td>
+						<td>
+							<a href="{{path('author_details',{'id':author.id})}}">details</a>
+						</td>
+
+						{% set total= total + author.nb_books %}
 					</tr>
 				{% endfor %}
 
@@ -51,6 +55,13 @@
 			</h1>
 
 		{% endif %}
+
+		<h1>
+			le tableau contient
+			{{authorsList| length}}
+			autheurs avec
+			{{ total}}
+			livres</h1>
 
 	</div>
 {% endblock %}
