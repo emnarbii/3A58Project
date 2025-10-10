@@ -18,13 +18,14 @@
 	</style>
 
 	<div class="example-wrapper">
+		<a href="{{path('author_insert')}}">Add new</a>
 
 
 		{% if authorsList is defined and authorsList is not empty %}
 			<table border="1">
 				<tr>
 					<th>Id</th>
-					<th>picture</th>
+					{# <th>picture</th> #}
 					<th>UserNAme</th>
 					<th>email</th>
 					<th>nb_books</th>
@@ -34,16 +35,19 @@
 
 					<tr>
 						<td>{{author.id}}</td>
-						<td>
-							<img src="{{author.picture}}" alt="image non dispo"></td>
+						{# <td>
+																																					<img src="{{author.picture}}" alt="image non dispo"></td> #}
 						<td>{{author.username | upper}}</td>
 						<td>{{author.email}}</td>
-						<td>{{author.nb_books}}</td>
+						<td>{{author.nbBook}}</td>
+						{# <td>
+																		<a href="{{path('author_details',{'id':author.id})}}">details</a>
+																																				</td> #}
 						<td>
-							<a href="{{path('author_details',{'id':author.id})}}">details</a>
+							<a href="{{path('author_update',{'id':author.id})}}">update</a>
 						</td>
 
-						{% set total= total + author.nb_books %}
+						{% set total= total + author.nbBook %}
 					</tr>
 				{% endfor %}
 
