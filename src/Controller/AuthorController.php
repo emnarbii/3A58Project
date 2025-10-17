@@ -7,6 +7,7 @@ use App\Form\AuthorType;
 use App\Repository\AuthorRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,13 +70,23 @@ final class AuthorController extends AbstractController
 
     //gestion des auteurs avec data base
 
+
+
+
+
     //afficher la liste des auteurs
     #[Route('/authors', name: 'author_list')]
-    public function getAuthorList(AuthorRepository $authRepo): Response
+    public function getAuthorList(AuthorRepository $authRepo, Request $req): Response
     {
-        //$authors=$authRepo->findAll();
+        $authorName = $req->query->get('author');
+        if ($authorName) {
+            $authors = $authRepo->findAuthorByName($authorName);
+        } else {
+            $authors = $authRepo->findAll();
+        }
         return $this->render('author/list.html.twig', [
-            'authorsList' => $authRepo->findAll(),
+            'authorsList' => $authors,
+            'authorname' => $authorName,
         ]);
     }
 
@@ -96,7 +107,7 @@ final class AuthorController extends AbstractController
         return $this->redirectToRoute('author_list');
     }
 
-    //add statique
+    //add dynamique
     #[Route('/insert', name: 'author_insert')]
     public function insertAuthor(EntityManagerInterface $em, Request $request): Response
     {
@@ -108,19 +119,18 @@ final class AuthorController extends AbstractController
             $em->flush();
             return $this->redirectToRoute('author_list');
         }
-         return $this->render('author/form.html.twig', [
-            'authorForm' =>$form,
+        return $this->render('author/form.html.twig', [
+            'authorForm' => $form,
         ]);
-    
     }
 
 
-     //add statique
+    //update
     #[Route('/update/{id}', name: 'author_update')]
     public function updateAuthor(EntityManagerInterface $em, Request $request, $id): Response
     {
         $author = new Author();
-        $author=$em->getRepository(Author::class)->find($id);
+        $author = $em->getRepository(Author::class)->find($id);
         $form = $this->createForm(AuthorType::class, $author);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
@@ -128,9 +138,31 @@ final class AuthorController extends AbstractController
             $em->flush();
             return $this->redirectToRoute('author_list');
         }
-         return $this->render('author/form.html.twig', [
-            'authorForm' =>$form,
+        return $this->render('author/form.html.twig', [
+            'authorForm' => $form,
         ]);
-    
+    }
+    //delete author
+    #[Route('/delete/{id}', name: 'author_delete')]
+    public function deleteAuth(ManagerRegistry $mr, $id): Response
+    {
+        $manager = $mr->getManager();
+        $author = $manager->getRepository(Author::class)->find($id);
+        $manager->remove($author);
+        $manager->flush();
+
+        return $this->redirectToRoute('author_list');
+    }
+
+
+    //delete author
+    #[Route('/details/{id}', name: 'author_details')]
+    public function getDetails(AuthorRepository $authRepo, $id): Response
+    {
+        $author = $authRepo->find($id);
+
+        return $this->render('author/showAuthor.html.twig', [
+            'author' => $author,
+        ]);
     }
 }

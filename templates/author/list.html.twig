@@ -18,6 +18,11 @@
 	</style>
 
 	<div class="example-wrapper">
+
+		<form method="get" action="{{path('author_list')}}">
+			<input type="text" name="author" placeholder="Nom author" value="{{ authorname}}">
+			<button type="submit">Rechercher</button>
+		</form>
 		<a href="{{path('author_insert')}}">Add new</a>
 
 
@@ -36,15 +41,19 @@
 					<tr>
 						<td>{{author.id}}</td>
 						{# <td>
-																																					<img src="{{author.picture}}" alt="image non dispo"></td> #}
+																																																																																																	<img src="{{author.picture}}" alt="image non dispo"></td> #}
 						<td>{{author.username | upper}}</td>
 						<td>{{author.email}}</td>
 						<td>{{author.nbBook}}</td>
 						{# <td>
-																		<a href="{{path('author_details',{'id':author.id})}}">details</a>
-																																				</td> #}
+																																																																														<a href="{{path('author_details',{'id':author.id})}}">details</a>
+																																																																																																</td> #}
 						<td>
+							<a href="{{path('author_details',{'id':author.id})}}">details</a>
+
 							<a href="{{path('author_update',{'id':author.id})}}">update</a>
+							<a href="{{path('author_delete',{'id':author.id})}}" onclick="return confirm('supprimer??????');">delete</a>
+
 						</td>
 
 						{% set total= total + author.nbBook %}
